@@ -1,9 +1,7 @@
 # PocketScope AI
 
 **Low-cost pocket microscope assistant** by Team BIONEX  
-BIOBYTE 2K26 · Crescent Technocrats Club · B.S. Abdur Rahman Crescent Institute
-
-> Educational and research prototype. Not for clinical diagnosis.
+Educational and research prototype. Not for clinical diagnosis.
 
 ---
 
