@@ -1,9 +1,6 @@
 """
 PocketScope AI — Low-Cost Pocket Microscope Assistant
 Team BIONEX · BIOBYTE 2K26
-
-Educational and research prototype. Not for clinical diagnosis.
-Detection uses basic OpenCV image processing, NOT a trained medical model.
 """
 
 import html as _html
@@ -53,6 +50,11 @@ TEMPLATES = {
         "bg": "#0C0F1E", "surface": "#151A33", "border": "#2B3358",
         "accent": "#8AA2FF", "highlight": "#8AA2FF",
         "text": "#E9ECFA", "muted": "#A4ACD1",
+    },
+    "Clean Light": {
+        "bg": "#F8F9FA", "surface": "#FFFFFF", "border": "#DDE1E5",
+        "accent": "#0066CC", "highlight": "#0052A3",
+        "text": "#212529", "muted": "#6C757D",
     },
 }
 
@@ -161,8 +163,11 @@ st.markdown(f"""<style>
   --ac:{tok['accent']};--hl:{tok['highlight']};--tx:{tok['text']};--mt:{tok['muted']};
   --fh:{fnt['heading']};--fs:{fnt['sub']};--fb:{fnt['body']};
 }}
-.stApp{{background:var(--bg)!important;color:var(--tx);font-family:var(--fb);font-size:16px;line-height:1.6}}
-h1,h2,h3,h4,h5,h6{{font-family:var(--fh)!important;color:var(--tx);text-transform:uppercase;letter-spacing:.06em}}
+.stApp{{background:var(--bg)!important;color:var(--tx);font-family:var(--fb);font-size:18px;line-height:1.6}}
+h1{{font-family:var(--fh)!important;color:var(--tx);text-transform:uppercase;letter-spacing:.06em;font-size:calc(2rem + 3px)!important}}
+h2{{font-family:var(--fh)!important;color:var(--tx);text-transform:uppercase;letter-spacing:.06em;font-size:calc(1.5rem + 3px)!important}}
+h3{{font-family:var(--fh)!important;color:var(--tx);text-transform:uppercase;letter-spacing:.06em;font-size:calc(1.2rem + 3px)!important}}
+h4,h5,h6{{font-family:var(--fh)!important;color:var(--tx);text-transform:uppercase;letter-spacing:.06em;font-size:calc(1rem + 2px)!important}}
 
 /* ── Cards ──────────────────────────────────────────────────── */
 @keyframes fadeUp{{from{{opacity:0;transform:translateY(10px)}}to{{opacity:1;transform:translateY(0)}}}}
@@ -171,28 +176,28 @@ h1,h2,h3,h4,h5,h6{{font-family:var(--fh)!important;color:var(--tx);text-transfor
   animation:fadeUp .4s ease both;transition:box-shadow .18s,border-color .18s,transform .18s}}
 .ps-c:hover{{box-shadow:0 4px 20px rgba(0,0,0,.35);border-color:var(--ac);transform:translateY(-2px)}}
 .ps-c.accent-top{{border-top:2px solid var(--ac)}}
-.ps-ct{{font-family:var(--fs);font-size:1rem;font-weight:700;color:var(--tx);letter-spacing:.04em;margin-bottom:6px}}
-.ps-cm{{font-size:.82rem;color:var(--mt);margin-bottom:6px}}
-.ps-pill{{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.78rem;font-family:var(--fs);
+.ps-ct{{font-family:var(--fs);font-size:calc(1rem + 2px);font-weight:700;color:var(--tx);letter-spacing:.04em;margin-bottom:6px}}
+.ps-cm{{font-size:calc(.82rem + 2px);color:var(--mt);margin-bottom:6px}}
+.ps-pill{{display:inline-block;padding:2px 10px;border-radius:20px;font-size:calc(.78rem + 2px);font-family:var(--fs);
   border:1px solid var(--bd);color:var(--mt);margin:2px 4px 2px 0}}
 .ps-pill.active{{background:var(--ac);color:var(--bg);border-color:var(--ac)}}
 .ps-swatch{{display:inline-block;width:18px;height:18px;border-radius:4px;vertical-align:middle;margin-right:8px;border:1px solid var(--bd)}}
-.ps-mono{{font-family:'JetBrains Mono',Consolas,monospace;font-size:.85rem}}
+.ps-mono{{font-family:'JetBrains Mono',Consolas,monospace;font-size:calc(.85rem + 2px)}}
 .ps-divider{{text-align:center;margin:20px 0;position:relative}}
 .ps-divider::before{{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--bd)}}
-.ps-divider span{{position:relative;background:var(--bg);padding:0 12px;color:var(--ac);font-family:var(--fs);font-size:.82rem;letter-spacing:.08em}}
-.ps-hero-num{{font-family:var(--fh);font-size:clamp(2.2rem,8vw,3.5rem);color:var(--ac);line-height:1;letter-spacing:.02em}}
+.ps-divider span{{position:relative;background:var(--bg);padding:0 12px;color:var(--ac);font-family:var(--fs);font-size:calc(.82rem + 2px);letter-spacing:.08em}}
+.ps-hero-num{{font-family:var(--fh);font-size:clamp(2.4rem,8.2vw,3.7rem);color:var(--ac);line-height:1;letter-spacing:.02em}}
 
 /* ── Bars ───────────────────────────────────────────────────── */
-.ps-bw{{margin-bottom:6px}}.ps-bl{{font-size:.82rem;color:var(--mt);margin-bottom:2px}}
+.ps-bw{{margin-bottom:6px}}.ps-bl{{font-size:calc(.82rem + 2px);color:var(--mt);margin-bottom:2px}}
 .ps-bt{{height:7px;background:var(--bd);border-radius:4px;overflow:hidden}}
 .ps-bf{{height:7px;background:var(--ac);border-radius:4px;transition:width .5s ease}}
 
 /* ── Streamlit overrides (scoped, not broad) ─────────────── */
 div[data-testid="stMetric"]{{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px 16px}}
-div[data-testid="stMetricLabel"] p{{color:var(--mt)!important;font-family:var(--fs);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}}
-div[data-testid="stMetricValue"]{{color:var(--ac)!important;font-family:var(--fh);font-size:1.5rem}}
-div[data-testid="stTabs"] button[role="tab"]{{color:var(--mt)!important;font-family:var(--fs);font-weight:600;font-size:.92rem;
+div[data-testid="stMetricLabel"] p{{color:var(--mt)!important;font-family:var(--fs);font-size:calc(.78rem + 2px);text-transform:uppercase;letter-spacing:.05em}}
+div[data-testid="stMetricValue"]{{color:var(--ac)!important;font-family:var(--fh);font-size:calc(1.5rem + 2px)}}
+div[data-testid="stTabs"] button[role="tab"]{{color:var(--mt)!important;font-family:var(--fs);font-weight:600;font-size:calc(.92rem + 2px);
   min-height:44px;border-bottom:2px solid transparent;padding:8px 16px;letter-spacing:.04em;transition:color .15s,border-color .15s}}
 div[data-testid="stTabs"] button[role="tab"][aria-selected="true"]{{color:var(--ac)!important;border-bottom-color:var(--ac)!important}}
 div.stButton>button,div.stDownloadButton>button{{background:var(--sf)!important;color:var(--tx)!important;
@@ -203,11 +208,11 @@ div.stButton>button:active{{transform:scale(.97)}}
 div[data-testid="stFileUploader"],div[data-testid="stCameraInput"]{{background:var(--sf);border:1px dashed var(--bd);border-radius:12px;padding:10px}}
 div[data-testid="stExpander"]{{background:var(--sf);border:1px solid var(--bd);border-radius:12px;margin-bottom:14px}}
 section[data-testid="stSidebar"]{{background:var(--sf);border-right:1px solid var(--bd)}}
-input,select,textarea{{font-size:16px!important}}
+input,select,textarea{{font-size:18px!important}}
 
 /* ── Demo banner ───────────────────────────────────────────── */
 .ps-demo{{background:repeating-linear-gradient(-45deg,rgba(255,200,0,.06) 0 10px,transparent 10px 20px);
-  border:1px dashed #f0a000;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:.84rem;color:#f0a000;font-weight:600}}
+  border:1px dashed #f0a000;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:calc(.84rem + 2px);color:#f0a000;font-weight:600}}
 
 /* ── Hero (start screen) ───────────────────────────────────── */
 .ps-hero{{text-align:center;padding:24px 16px 16px}}
@@ -217,12 +222,12 @@ input,select,textarea{{font-size:16px!important}}
 @keyframes psScan{{0%,100%{{top:28%;opacity:0}}15%{{opacity:.45}}85%{{opacity:.45}}100%{{top:72%;opacity:0}}}}
 .ps-ring-pulse{{animation:psRing 3s ease-in-out infinite}}
 @keyframes psRing{{0%,100%{{stroke-opacity:1}}50%{{stroke-opacity:.5}}}}
-.ps-hero-eye{{font-family:var(--fs);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:6px}}
-.ps-hero-title{{font-family:var(--fh);font-size:clamp(26px,7vw,44px);letter-spacing:.08em;text-transform:uppercase;
+.ps-hero-eye{{font-family:var(--fs);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ac);margin-bottom:6px}}
+.ps-hero-title{{font-family:var(--fh);font-size:clamp(28px,7.2vw,46px);letter-spacing:.08em;text-transform:uppercase;
   color:var(--tx);margin:0 0 6px;line-height:1.15;word-wrap:break-word}}
-.ps-hero-tag{{font-family:var(--fs);font-size:clamp(14px,3vw,18px);color:var(--mt);margin-bottom:8px}}
-.ps-hero-desc{{font-family:var(--fb);font-size:16px;color:var(--mt);line-height:1.6;max-width:480px;margin:0 auto 20px}}
-.ps-hero-foot{{font-size:12px;color:var(--mt);margin-top:20px}}
+.ps-hero-tag{{font-family:var(--fs);font-size:clamp(16px,3.2vw,20px);color:var(--mt);margin-bottom:8px}}
+.ps-hero-desc{{font-family:var(--fb);font-size:18px;color:var(--mt);line-height:1.6;max-width:480px;margin:0 auto 20px}}
+.ps-hero-foot{{font-size:14px;color:var(--mt);margin-top:20px}}
 @media(max-width:640px){{.ps-c{{padding:14px}}.ps-hero{{padding:16px 12px 12px}}}}
 </style>""", unsafe_allow_html=True)
 
@@ -403,8 +408,6 @@ if st.session_state.page == "start":
         st.button("🧫  Inspect a culture plate", on_click=_go_plate, use_container_width=True)
     with c2:
         st.button("🔬  Inspect a microscope slide", on_click=_go_slide, use_container_width=True)
-    st.markdown('<div style="text-align:center;font-size:12px;color:var(--mt);margin-top:24px">'
-                'Educational prototype. Not for medical diagnosis.</div>', unsafe_allow_html=True)
     st.stop()
 
 
@@ -414,7 +417,7 @@ if st.session_state.page == "start":
 # ── Compact header + back button (header first) ──────────────────────
 hdr_l, hdr_r = st.columns([4, 1])
 with hdr_l:
-    st.markdown('<div style="font-family:var(--fh);font-size:clamp(18px,4vw,24px);letter-spacing:.06em;'
+    st.markdown('<div style="font-family:var(--fh);font-size:clamp(20px,4.2vw,26px);letter-spacing:.06em;'
                 'text-transform:uppercase;color:var(--tx)">POCKETSCOPE AI</div>', unsafe_allow_html=True)
 with hdr_r:
     st.button("← Start", on_click=_go_start, use_container_width=True)
@@ -501,9 +504,9 @@ if loaded is None:
            stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.45;margin-bottom:16px">
         <path d="M6 18h12"/><path d="M12 18v-4"/><rect x="9" y="2" width="6" height="10" rx="1"/>
         <circle cx="12" cy="18" r="2"/></svg>
-      <div style="font-family:var(--fh);font-size:1.1rem;letter-spacing:.05em;margin-bottom:6px">
+      <div style="font-family:var(--fh);font-size:calc(1.1rem + 2px);letter-spacing:.05em;margin-bottom:6px">
         Ready for inspection</div>
-      <div style="font-size:.9rem;max-width:420px;margin:0 auto">{desc}</div></div>''', unsafe_allow_html=True)
+      <div style="font-size:calc(.9rem + 2px);max-width:420px;margin:0 auto">{desc}</div></div>''', unsafe_allow_html=True)
     st.stop()
 
 # ── Load & check image ───────────────────────────────────────────────
@@ -714,7 +717,7 @@ chips += f'<span class="ps-pill">{_html.escape(most_common)}</span>'
 chips += f'<span class="ps-pill"><span class="ps-swatch" style="background:{color_hex}"></span>{_html.escape(color_name)}</span>'
 st.markdown(f'''<div class="ps-c accent-top" style="text-align:center;padding:24px">
   <div class="ps-hero-num">{detect_count}</div>
-  <div style="font-family:var(--fs);font-size:1rem;letter-spacing:.04em;color:var(--mt);margin:4px 0 10px">
+  <div style="font-family:var(--fs);font-size:calc(1rem + 2px);letter-spacing:.04em;color:var(--mt);margin:4px 0 10px">
     {item_word} detected</div>{chips}</div>''', unsafe_allow_html=True)
 
 for w in warns:
@@ -787,7 +790,7 @@ with tab_img:
     st.download_button("Download annotated PNG", data=to_png(annotated),
                        file_name="pocketscope_detection.png", mime="image/png", use_container_width=True)
 
-# ── CHARACTERISTICS (Panels A–E + organism selector) ────────────────
+# ── CHARACTERISTICS (Panels A, B, D + organism selector) ────────────────
 with tab_chr:
     # Organism selector
     org_opts = ["Not confirmed (unknown)"] + list(ORGANISMS.keys())
@@ -801,13 +804,13 @@ with tab_chr:
               "Shape is estimated from outline geometry and is a tentative visual observation.")
     if is_plate:
         card("A — Colony form", bars(shapes_or_forms) +
-             (f"<p style='color:var(--mt);font-size:.85rem'><b>Edge estimate:</b> "
+             (f"<p style='color:var(--mt);font-size:calc(.85rem + 2px)'><b>Edge estimate:</b> "
               + ", ".join(f"{k}: {v}" for k,v in edge_counts.items()) + "</p>" if edge_counts else "") +
-             f"<p style='color:var(--mt);font-size:.82rem'>{note_a}</p>",
+             f"<p style='color:var(--mt);font-size:calc(.82rem + 2px)'>{note_a}</p>",
              "Tentative observation from outline geometry", True)
     else:
         card("A — Object outline", bars(shapes_or_forms) +
-             f"<p style='color:var(--mt);font-size:.82rem'>{note_a}</p>",
+             f"<p style='color:var(--mt);font-size:calc(.82rem + 2px)'>{note_a}</p>",
              "Tentative observation from outline geometry", True)
 
     divider("B")
@@ -819,32 +822,9 @@ with tab_chr:
         an,ah,ar = agar_color
         col_body += (f"<p><span class='ps-swatch' style='background:{ah}'></span>"
                      f"<b>Agar colour:</b> {_html.escape(an)} <span class='ps-mono'>({ah})</span></p>")
-    col_body += ("<p style='color:var(--mt);font-size:.82rem'>Staining, growth medium, lighting and camera settings "
+    col_body += ("<p style='color:var(--mt);font-size:calc(.82rem + 2px)'>Staining, growth medium, lighting and camera settings "
                  "change apparent colour. Colour alone does not identify any organism.</p>")
     card("B — Observed colour", col_body, "Measured inside detected regions", True)
-
-    divider("C")
-    # Panel C: Type of organism
-    if confirmed:
-        org = ORGANISMS[sel_org]
-        card("C — Type of organism",
-             f"<p style='color:var(--ac);font-weight:700'>{_html.escape(sel_org)}</p>"
-             f"<p style='color:var(--mt);font-size:.85rem;font-style:italic'>"
-             f"Reference entry for your selection — not detected from the image.</p>"
-             f"<p><b>Gram reaction:</b> {_html.escape(org['gram'])}<br>"
-             f"<b>Cell shape:</b> {_html.escape(org['shape'])}<br>"
-             f"<b>Arrangement:</b> {_html.escape(org['arrangement'])}<br>"
-             f"<b>Typical colony:</b> {_html.escape(org['colony'])}<br>"
-             f"<b>Notes:</b> {_html.escape(org['notes'])}</p>",
-             "Selected by user, not detected by app", True)
-    else:
-        pills = "".join(f'<span class="ps-pill{" active" if c=="Unknown" else ""}">{c}</span>'
-                        for c in ["Bacteria","Yeast","Protozoa","Other microscopic objects","Unknown"])
-        card("C — Type of organism",
-             f"<p><b>Unknown / not determined</b> (classification unavailable)</p>{pills}"
-             "<p style='color:var(--mt);font-size:.82rem'>The computer-vision algorithm detects contours "
-             "by contrast and geometry; it does not classify biological entities.</p>",
-             "No organism identified", True)
 
     divider("D")
     # Panel D: Details
@@ -867,34 +847,12 @@ with tab_chr:
                f"• Arrangement: {_html.escape(org['arrangement'])}<br>"
                f"• Colony: {_html.escape(org['colony'])}")
         card("D — Organism details", f"<p>{inferred}</p><hr style='border-color:var(--bd);margin:12px 0'>"
-             f"<p>{edu}</p><hr style='border-color:var(--bd);margin:12px 0'><p style='font-size:.82rem;color:var(--mt)'>{limits}</p>",
+             f"<p>{edu}</p><hr style='border-color:var(--bd);margin:12px 0'><p style='font-size:calc(.82rem + 2px);color:var(--mt)'>{limits}</p>",
              "Selected by user, not detected from image", True)
     else:
         card("D — Organism details", f"<p>{inferred}</p>"
-             f"<hr style='border-color:var(--bd);margin:12px 0'><p style='font-size:.82rem;color:var(--mt)'>{limits}</p>",
+             f"<hr style='border-color:var(--bd);margin:12px 0'><p style='font-size:calc(.82rem + 2px);color:var(--mt)'>{limits}</p>",
              "Only what was measured from this image", True)
-
-    divider("E")
-    # Panel E: Disease associations
-    if confirmed:
-        org = ORGANISMS[sel_org]
-        dlist = "".join(f"<li>{_html.escape(d)}</li>" for d in org["diseases"])
-        card("E — Possible disease associations",
-             f"<p style='color:var(--mt);font-size:.85rem;font-style:italic'>"
-             f"Reference entry for your selection ({_html.escape(sel_org)}) — "
-             f"not detected from the image.</p>"
-             f"<ul style='margin:8px 0'>{dlist}</ul>"
-             "<p style='color:var(--mt);font-size:.82rem;font-weight:600'>"
-             "This does not mean the sample indicates disease. PocketScope AI cannot "
-             "calculate the chance of disease from an image. "
-             "A model’s classification confidence is not the probability that a person has a disease.</p>",
-             "Reference only", True)
-    else:
-        card("E — Possible disease associations",
-             "<p style='font-weight:600'>Disease association unavailable: the organism has not been "
-             "reliably identified. Visual appearance alone cannot determine whether a sample indicates disease.</p>"
-             "<p style='color:var(--mt);font-size:.82rem'>A model’s classification confidence is not the "
-             "probability that a person has a disease.</p>", "", True)
 
 # ── REPORT (built from list, no blank gaps) ───────────────────────────
 with tab_rpt:
@@ -929,19 +887,13 @@ with tab_rpt:
     if is_plate and st.session_state.get("cfu_on"):
         lines += ["", f"CFU/mL (est.) : {detect_count * st.session_state.get('cfu_dil',1) / st.session_state.get('cfu_vol',0.1):,.0f}",
                   "  (Meaningful only for 30–300 colonies verified by hand.)"]
-    lines += ["", "DISEASE STATEMENT", "-" * 30,
-              "Disease association unavailable: the organism has not been reliably identified.",
-              "Visual appearance alone cannot determine whether a sample indicates disease.", "",
-              "DISCLAIMER", "-" * 30,
-              "Experimental analysis for educational use. Not a medical diagnosis.",
+    lines += ["", "DISCLAIMER", "-" * 30,
+              "Experimental analysis for educational use.",
               "=" * 60]
     report = "\n".join(lines)
     st.text_area("Report", report, height=340, label_visibility="collapsed")
     st.download_button("Download report (.txt)", data=report,
                        file_name="pocketscope_report.txt", mime="text/plain", use_container_width=True)
-
-st.markdown('<p style="text-align:center;font-size:.84rem;color:var(--mt);margin-top:14px">'
-            'Experimental analysis for educational use. Not a medical diagnosis.</p>', unsafe_allow_html=True)
 
 # =====================================================================
 # ABOUT & LIMITATIONS
@@ -950,42 +902,34 @@ with st.expander("About & limitations"):
     a1, a2 = st.columns(2)
     with a1:
         st.markdown("**Project**")
-        st.write("Problem Statement: Pocket Microscope for Rural Labs\n\n"
-                 "Design Goal: Make basic microscopic image capture and analysis more affordable and accessible.\n\n"
-                 "By BIONEX — BIOBYTE 2K26, Crescent Technocrats Club, "
-                 "B.S. Abdur Rahman Crescent Institute of Science and Technology.\n\n"
-                 "Hardware: Smartphone camera · 3D-printed clip-on holder · Lens · LED backlight + stand")
+        st.markdown("Problem Statement: Pocket Microscope for Rural Labs")
+        st.markdown("Design Goal: Make basic microscopic image capture and analysis more affordable and accessible.")
+        st.markdown("Hardware: Smartphone camera · 3D-printed clip-on holder · Lens · LED backlight + stand")
         st.markdown("**Scope of this prototype**")
-        st.write("Objects are counted by outline. Cell types are not differentiated in OpenCV modes.\n\n"
-                 "Colony appearance alone cannot identify species. No organism names are generated.\n\n"
-                 "No medical diagnosis is produced. No disease probabilities, confidence scores or diagnoses.\n\n"
-                 "Colour is influenced by lighting, stain and camera white-balance.\n\n"
-                 "Spiral shapes cannot be judged from 2-D contour analysis.")
+        st.markdown("Objects are counted by outline.")
+        st.markdown("Cell types are not differentiated in OpenCV modes.")
+        st.markdown("Colony appearance alone cannot identify species.")
+        st.markdown("Colour is influenced by lighting, stain and camera white-balance.")
+        st.markdown("Spiral shapes cannot be judged from 2-D contour analysis.")
     with a2:
         st.markdown("**Implemented**")
-        st.write("Image upload and camera capture with reset · "
-                 "Quality checks (sharpness, brightness) · "
-                 "OpenCV contour detection and counting · "
-                 "Outline shape/form estimate · "
-                 "HSV-based colour measurement with swatch · "
-                 "Petri dish detection and rim masking · "
-                 "Illumination-corrected colony segmentation · "
-                 "Watershed colony splitting · "
-                 "Colony size distribution (5 bins) · "
-                 "Organism reference library (8 organisms, textbook entries) · "
-                 "CFU/mL calculator · "
-                 "Annotated PNG and TXT report download · "
-                 "5 dark templates, 2 font pairings · "
-                 "Optional trained-model mode (when ultralytics and model file are present)")
+        st.markdown("Image upload and camera capture with reset")
+        st.markdown("Quality checks (sharpness, brightness)")
+        st.markdown("OpenCV contour detection and counting")
+        st.markdown("Outline shape/form estimate")
+        st.markdown("HSV-based colour measurement with swatch")
+        st.markdown("Petri dish detection and rim masking")
+        st.markdown("Illumination-corrected colony segmentation")
+        st.markdown("Watershed colony splitting")
+        st.markdown("Colony size distribution (5 bins)")
+        st.markdown("Organism reference library (8 organisms, textbook entries)")
+        st.markdown("CFU/mL calculator")
+        st.markdown("Annotated PNG and TXT report download")
+        st.markdown("6 templates (including Clean Light mode), 2 font pairings")
+        st.markdown("Optional trained-model mode (when ultralytics and model file are present)")
         st.markdown("**Planned future work**")
-        st.write("Trained classification on expert-labelled datasets · "
-                 "Better segmentation · Validated datasets · "
-                 "Offline on-phone model · Regional-language reports")
-
-# ── Footer ───────────────────────────────────────────────────────────
-st.markdown('''<div style="text-align:center;padding:24px 12px 16px;margin-top:36px;border-top:1px solid var(--bd)">
-  <div style="font-family:var(--fs);font-size:13px;font-weight:600;color:var(--tx);letter-spacing:.04em;margin-bottom:4px">
-    Educational prototype. Not for medical diagnosis.</div>
-  <div style="font-size:11px;color:var(--mt)">
-    Team BIONEX · BIOBYTE 2K26 · B.S. Abdur Rahman Crescent Institute of Science and Technology</div>
-</div>''', unsafe_allow_html=True)
+        st.markdown("Trained classification on expert-labelled datasets")
+        st.markdown("Better segmentation")
+        st.markdown("Validated datasets")
+        st.markdown("Offline on-phone model")
+        st.markdown("Regional-language reports")
